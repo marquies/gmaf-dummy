@@ -8,38 +8,40 @@ import java.beans.PropertyChangeListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class NvidiaCUDAConfigDialog extends JDialog
+public class NvidiaCUDAGenerateConfigDialog extends JDialog
         implements ActionListener,
         PropertyChangeListener {
-    private final Pattern pattern;
     private String typedText = null;
-    private JTextField textField;
 
     private String connectionString;
     private JOptionPane optionPane;
 
     private String btnString1 = "Enter";
     private String btnString2 = "Cancel";
-    private String regex = "^[A-Za-z0-9.-]*:[0-9]{1,4}$";
 
     /**
      * Creates the reusable dialog.
      */
-    public NvidiaCUDAConfigDialog(Frame aFrame, String currentConnectionString) {
+    public NvidiaCUDAGenerateConfigDialog(Frame aFrame) {
 
         super(aFrame, true);
 
-        pattern = Pattern.compile(regex);
+        setTitle("CUDA Generate Configuration");
 
-        connectionString = currentConnectionString.toLowerCase();
-        setTitle("CUDA Configuration");
-
-        textField = new JTextField(10);
-        textField.setText(connectionString);
+        String msgString = "Select algorithm:";
 
 
-        String msgString1 = "Set the CUDA processor instance host:port";
-        Object[] array = {msgString1,  textField};
+        DefaultComboBoxModel model = new DefaultComboBoxModel<String>();
+
+        model.addElement("seq");
+        model.addElement("pc_cpu_par");
+        model.addElement("pc_cuda");
+        model.addElement("pmper_cuda");
+        model.addElement("pcpr_cuda");
+
+        JComboBox cb = new JComboBox(model);
+
+        Object[] array = {msgString, cb};
 
         Object[] options = {btnString1, btnString2};
 
@@ -60,14 +62,6 @@ public class NvidiaCUDAConfigDialog extends JDialog
                         JOptionPane.CLOSED_OPTION));
             }
         });
-
-        addComponentListener(new ComponentAdapter() {
-            public void componentShown(ComponentEvent ce) {
-                textField.requestFocusInWindow();
-            }
-        });
-
-        textField.addActionListener(this);
         optionPane.addPropertyChangeListener(this);
     }
 
@@ -107,24 +101,18 @@ public class NvidiaCUDAConfigDialog extends JDialog
                     JOptionPane.UNINITIALIZED_VALUE);
 
             if (btnString1.equals(value)) {
-                typedText = textField.getText();
-                String ucText = typedText.toLowerCase();
 
-                Matcher m = pattern.matcher(ucText);
-
-                if (m.matches()) {
+                if (true) {
                     closeDialog();
                 } else {
                     //text was invalid
-                    textField.selectAll();
                     JOptionPane.showMessageDialog(
-                            NvidiaCUDAConfigDialog.this,
+                            NvidiaCUDAGenerateConfigDialog.this,
                             "Sorry, \"" + typedText + "\" "
                                     + "isn't a valid host:port.\n",
                             "Try again",
                             JOptionPane.ERROR_MESSAGE);
                     typedText = null;
-                    textField.requestFocusInWindow();
                 }
             } else {
                 typedText = null;

@@ -50,11 +50,26 @@ public class DummyGui {
         });
         f.add(clickToConfig);//adding button in JFrame
 
+        JButton clickToGenConfig = new JButton("click to generate config");//creating instance of JButton
+        clickToGenConfig.setBounds(130, 60, 150, 40);//x axis, y axis, width, height
+        clickToGenConfig.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                NvidiaCUDAGenerateConfigDialog genConfigdialog = new NvidiaCUDAGenerateConfigDialog(f);
+
+                genConfigdialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+                genConfigdialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                genConfigdialog.pack();
+                genConfigdialog.setVisible(true);
+            }
+        });
+        f.add(clickToGenConfig);//adding button in JFrame
+
         GraphCodeMeta gc = new GraphCodeMeta("post_100.wapo.json", null);
 
 
         JButton clickToQuery = new JButton("click to query");//creating instance of JButton
-        clickToQuery.setBounds(130, 100, 150, 40);//x axis, y axis, width, height
+        clickToQuery.setBounds(130, 110, 150, 40);//x axis, y axis, width, height
         clickToQuery.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
