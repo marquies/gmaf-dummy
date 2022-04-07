@@ -2,15 +2,24 @@ package de.patricksteinert.gmaf.dummygui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class NvidiaCUDAGenerateConfigDialog extends JDialog
         implements ActionListener,
         PropertyChangeListener {
+    private final JComboBox cb;
+    private final JSpinner jSpinner;
+    private final JCheckBox enablePmpr;
+    private final JSpinner jSpinner1;
     private String typedText = null;
 
     private String connectionString;
@@ -36,12 +45,25 @@ public class NvidiaCUDAGenerateConfigDialog extends JDialog
         model.addElement("seq");
         model.addElement("pc_cpu_par");
         model.addElement("pc_cuda");
-        model.addElement("pmper_cuda");
+        model.addElement("pmpr_cuda");
         model.addElement("pcpr_cuda");
 
-        JComboBox cb = new JComboBox(model);
+        cb = new JComboBox(model);
 
-        Object[] array = {msgString, cb};
+        String msgString1 = "File Limit";
+        SpinnerModel spinnerModelodel = new SpinnerNumberModel(100, -1, 999999, 1);
+        jSpinner = new JSpinner(spinnerModelodel);
+
+        String msgString2 = "Enable PMPR at Threshold";
+        enablePmpr = new JCheckBox();
+        enablePmpr.setSelected(true);
+
+        String msgString3 = "PMPR Threshold";
+        SpinnerModel spinnerModelodel1 = new SpinnerNumberModel(500, -1, 10000, 1);
+        jSpinner1 = new JSpinner(spinnerModelodel1);
+
+
+        Object[] array = {msgString, cb, msgString1, jSpinner, msgString2, enablePmpr, msgString3, jSpinner1};
 
         Object[] options = {btnString1, btnString2};
 
@@ -102,18 +124,31 @@ public class NvidiaCUDAGenerateConfigDialog extends JDialog
 
             if (btnString1.equals(value)) {
 
-                if (true) {
-                    closeDialog();
-                } else {
-                    //text was invalid
-                    JOptionPane.showMessageDialog(
-                            NvidiaCUDAGenerateConfigDialog.this,
-                            "Sorry, \"" + typedText + "\" "
-                                    + "isn't a valid host:port.\n",
-                            "Try again",
-                            JOptionPane.ERROR_MESSAGE);
-                    typedText = null;
+                closeDialog();
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Specify a file to save");
+
+                int userSelection = fileChooser.showSaveDialog(this);
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+
+                    File fileToSave = fileChooser.getSelectedFile();
+
+                    try {
+                        StringBuilder s = new StringBuilder();
+                        s.append("s=" + cb.getSelectedItem() + "\n");
+                        s.append("c=" + ((Integer) jSpinner.getValue()).intValue() + "\n");
+                        s.append("e=" + enablePmpr.isSelected() + "\n");
+                        s.append("t=" + ((Integer) jSpinner1.getValue()).intValue() + "\n");
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave.getAbsolutePath()));
+                        writer.write(s.toString());
+                        writer.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    System.out.println("Save as file: " + fileToSave.getAbsolutePath());
                 }
+
             } else {
                 typedText = null;
                 closeDialog();
@@ -122,6 +157,7 @@ public class NvidiaCUDAGenerateConfigDialog extends JDialog
     }
 
     /**
+     *
      */
     public void closeDialog() {
         setVisible(false);

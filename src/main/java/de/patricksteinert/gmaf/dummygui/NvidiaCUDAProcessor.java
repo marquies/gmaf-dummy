@@ -21,18 +21,14 @@ public class NvidiaCUDAProcessor extends CollectionProcessor {
     public void execute() {
         try {
             Socket socket = new Socket(host, 4711);
-            //PrintWriter out = new PrintWriter(s.getOutputStream());
             PrintStream out = new PrintStream(socket.getOutputStream());
 
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            System.out.println("Query by Example: " + queryGc.getFileName());
             out.print("Query by Example: " + queryGc.getFileName());
             result = new StringBuffer();
             String line = in.readLine();
             while (!line.equals("metrics complete")) {
                 line = in.readLine();
-                System.out.println(line);
                 result.append(line);
             }
             // Close our streams
@@ -50,14 +46,12 @@ public class NvidiaCUDAProcessor extends CollectionProcessor {
                 Float similarity = ((Float) m.get("similarity"));
                 Float recommendation = ((Float) m.get("recommendation"));
                 Float inferencing = ((Float) m.get("inferencing"));
-                //System.out.println(name + " " + similarity + " " + recommendation + " " + inferencing);
 
                 for (GraphCodeMeta gcm : collection) {
                     if (gcm.getFileName().equals(name)) {
                         float[] metric = {similarity, recommendation, inferencing};
                         gcm.setMetric(metric);
                     }
-
                 }
             }
         } catch (Exception ex) {
