@@ -1,6 +1,5 @@
 package de.patricksteinert.gmaf.dummygui;
 
-import de.swa.gc.GraphCode;
 
 /**
  * Created by Patrick Steinert on 04.04.22.
