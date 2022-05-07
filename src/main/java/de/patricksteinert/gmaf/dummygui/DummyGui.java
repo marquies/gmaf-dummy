@@ -75,10 +75,21 @@ public class DummyGui {
             public void actionPerformed(ActionEvent e) {
                 NvidiaCUDAProcessor ncp = new NvidiaCUDAProcessor();
                 ncp.setQueryObject(gc);
-                String[] connectionString = dialog.getValidatedText().split(":");
+                String configString = dialog.getValidatedText();
+                if (configString == null) {
+                    System.err.println("Please config first");
+
+                    JOptionPane.showMessageDialog(f, "Please config first.");
+
+                }
+                String[] connectionString = configString.split(":");
                 ncp.setHost(connectionString[0]);
                 ncp.setPort(Integer.parseInt(connectionString[1]));
-                ncp.execute();
+                try {
+                    ncp.execute();
+                } catch (RuntimeException exception) {
+                    JOptionPane.showMessageDialog(f, "Execution failed: " + exception.getMessage());
+                }
             }
         });
 
