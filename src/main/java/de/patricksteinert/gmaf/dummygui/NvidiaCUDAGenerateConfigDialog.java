@@ -13,23 +13,51 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * UI component to generate a gcsim configuration.
+ */
 public class NvidiaCUDAGenerateConfigDialog extends JDialog
         implements ActionListener,
         PropertyChangeListener {
+    /**
+     * Combo box for algorithm selection.
+     */
     private final JComboBox cb;
-    private final JSpinner jSpinner;
-    private final JCheckBox enablePmpr;
-    private final JSpinner jSpinner1;
-    private String typedText = null;
 
-    private String connectionString;
+    /**
+     * File limit input control.
+     */
+    private final JSpinner fileLimit;
+
+    /**
+     * Checkbox to activate/deactivate additional algorithm.
+     */
+    private final JCheckBox enablePmpr;
+
+    /**
+     * Input control to set threshold.
+     */
+    private final JSpinner additionalAlgorithmThreshold;
+
+    /**
+     * Select input control for base algorithm.
+     */
     private JOptionPane optionPane;
 
+    /**
+     * OK button text.
+     */
     private String btnString1 = "Enter";
+
+    /**
+     * Cancel button text.
+     */
     private String btnString2 = "Cancel";
 
     /**
      * Creates the reusable dialog.
+     *
+     * @param aFrame the parent UI component.
      */
     public NvidiaCUDAGenerateConfigDialog(Frame aFrame) {
 
@@ -52,7 +80,7 @@ public class NvidiaCUDAGenerateConfigDialog extends JDialog
 
         String msgString1 = "File Limit";
         SpinnerModel spinnerModelodel = new SpinnerNumberModel(100, -1, 999999, 1);
-        jSpinner = new JSpinner(spinnerModelodel);
+        fileLimit = new JSpinner(spinnerModelodel);
 
         String msgString2 = "Enable PMPR at Threshold";
         enablePmpr = new JCheckBox();
@@ -60,10 +88,10 @@ public class NvidiaCUDAGenerateConfigDialog extends JDialog
 
         String msgString3 = "PMPR Threshold";
         SpinnerModel spinnerModelodel1 = new SpinnerNumberModel(500, -1, 10000, 1);
-        jSpinner1 = new JSpinner(spinnerModelodel1);
+        additionalAlgorithmThreshold = new JSpinner(spinnerModelodel1);
 
 
-        Object[] array = {msgString, cb, msgString1, jSpinner, msgString2, enablePmpr, msgString3, jSpinner1};
+        Object[] array = {msgString, cb, msgString1, fileLimit, msgString2, enablePmpr, msgString3, additionalAlgorithmThreshold};
 
         Object[] options = {btnString1, btnString2};
 
@@ -87,13 +115,7 @@ public class NvidiaCUDAGenerateConfigDialog extends JDialog
         optionPane.addPropertyChangeListener(this);
     }
 
-    /**
-     * Returns null if the typed string was invalid;
-     * otherwise, returns the string as the user entered it.
-     */
-    public String getValidatedText() {
-        return typedText;
-    }
+
 
     /**
      * This method handles events for the text field.
@@ -136,9 +158,9 @@ public class NvidiaCUDAGenerateConfigDialog extends JDialog
                     try {
                         StringBuilder s = new StringBuilder();
                         s.append("s=" + cb.getSelectedItem() + "\n");
-                        s.append("c=" + ((Integer) jSpinner.getValue()).intValue() + "\n");
+                        s.append("c=" + ((Integer) fileLimit.getValue()).intValue() + "\n");
                         s.append("e=" + enablePmpr.isSelected() + "\n");
-                        s.append("t=" + ((Integer) jSpinner1.getValue()).intValue() + "\n");
+                        s.append("t=" + ((Integer) additionalAlgorithmThreshold.getValue()).intValue() + "\n");
                         BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave.getAbsolutePath()));
                         writer.write(s.toString());
                         writer.close();
@@ -150,14 +172,13 @@ public class NvidiaCUDAGenerateConfigDialog extends JDialog
                 }
 
             } else {
-                typedText = null;
                 closeDialog();
             }
         }
     }
 
     /**
-     *
+     * Call to close the dialog.
      */
     public void closeDialog() {
         setVisible(false);

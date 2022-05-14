@@ -8,17 +8,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
+ * Application starter creating the basic user interface.
+ * <p>
+ * <p>
  * Created by Patrick Steinert on 04.04.22.
  */
 public class DummyGui {
+    public JFrame f;
 
+
+    private String connectionString = "localhost:4711";
+
+    /**
+     * Main function of the application.
+     *
+     * @param args command line arguments.
+     */
     public static void main(String[] args) {
         DummyGui g = new DummyGui();
         g.runDummy();
     }
 
+    /**
+     * Start method to create the user interface.
+     */
     public void runDummy() {
-        JFrame f = new JFrame();//creating instance of JFrame
+
+        f = new JFrame();
 
 
         Border bo = new LineBorder(Color.yellow);
@@ -26,19 +42,17 @@ public class DummyGui {
         bar.setBorder(bo);
         JMenu menu = new JMenu("GMAF Menu");
 
-        //JMenuItem item = new JMenuItem("Ich bin das JMenuItem");
-        NvidiaCUDAConfig item = new NvidiaCUDAConfig(f);
+        NvidiaCUDAConfig item = new NvidiaCUDAConfig(this);
         menu.add(item);
         bar.add(menu);
         f.setJMenuBar(bar);
 
-        NvidiaCUDAConfigDialog dialog = new NvidiaCUDAConfigDialog(f, "localhost:4711");
-
+        NvidiaCUDAConfigDialog dialog = new NvidiaCUDAConfigDialog(this, connectionString);
 
         DummyGui dummy = this;
 
-        JButton clickToConfig = new JButton("click to config");//creating instance of JButton
-        clickToConfig.setBounds(130, 10, 150, 40);//x axis, y axis, width, height
+        JButton clickToConfig = new JButton("click to config");
+        clickToConfig.setBounds(130, 10, 150, 40);
         clickToConfig.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -48,10 +62,10 @@ public class DummyGui {
                 dialog.setVisible(true);
             }
         });
-        f.add(clickToConfig);//adding button in JFrame
+        f.add(clickToConfig);
 
-        JButton clickToGenConfig = new JButton("click to generate config");//creating instance of JButton
-        clickToGenConfig.setBounds(130, 60, 150, 40);//x axis, y axis, width, height
+        JButton clickToGenConfig = new JButton("click to generate config");
+        clickToGenConfig.setBounds(130, 60, 150, 40);
         clickToGenConfig.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -68,8 +82,8 @@ public class DummyGui {
         GraphCodeMeta gc = new GraphCodeMeta("post_100.wapo.json", null);
 
 
-        JButton clickToQuery = new JButton("click to query");//creating instance of JButton
-        clickToQuery.setBounds(130, 110, 150, 40);//x axis, y axis, width, height
+        JButton clickToQuery = new JButton("click to query");
+        clickToQuery.setBounds(130, 110, 150, 40);
         clickToQuery.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -100,5 +114,23 @@ public class DummyGui {
         f.setVisible(true);
 
     }
+
+    /**
+     * Getter for the connection string.
+     * @return the connection string
+     */
+    public String getConnectionString() {
+        return connectionString;
+    }
+
+    /**
+     * Setter for the connection string.
+     * 
+     * @param connectionString connection string.
+     */
+    public void setConnectionString(String connectionString) {
+        this.connectionString = connectionString;
+    }
+
 }
 

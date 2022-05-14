@@ -2,7 +2,6 @@ package de.patricksteinert.gmaf.dummygui;
 
 import com.google.gson.Gson;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -10,15 +9,40 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.Vector;
 
+/**
+ * gcsim connector and query input output processor
+ */
 public class NvidiaCUDAProcessor extends CollectionProcessor {
 
+    /**
+     * Connection host string.
+     */
     private String host = "cudaknecht.fritz.box";
+
+    /**
+     * Connection port number.
+     */
     private int port = 4711;
+
+    /**
+     * Result string buffer.
+     */
     private StringBuffer result = null;
+
+    /**
+     * Query Graph Code.
+     */
     private GraphCodeMeta queryGc;
+
+    /**
+     * Collection to generate metric values to.
+     */
     private Vector<GraphCodeMeta> collection;
 
 
+    /**
+     * Execution of the query.
+     */
     public void execute() {
         try {
             Socket socket = new Socket(host, 4711);
@@ -81,10 +105,18 @@ public class NvidiaCUDAProcessor extends CollectionProcessor {
 
     }
 
+    /**
+     * Setter for the host string.
+     * @param s
+     */
     public void setHost(String s) {
         this.host = s;
     }
 
+    /**
+     * Setter for the port string.
+     * @param port
+     */
     public void setPort(int port) {
         this.port = port;
     }

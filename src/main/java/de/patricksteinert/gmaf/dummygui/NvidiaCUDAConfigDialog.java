@@ -1,33 +1,73 @@
 package de.patricksteinert.gmaf.dummygui;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * UI component for the configuration dialog.
+ */
 public class NvidiaCUDAConfigDialog extends JDialog
         implements ActionListener,
         PropertyChangeListener {
+    /**
+     * Regex patten field for input validation.
+     */
     private final Pattern pattern;
-    private String typedText = null;
-    private JTextField textField;
 
-    private String connectionString;
-    private JOptionPane optionPane;
+    /**
+     * Base UI.
+     */
+    private final DummyGui gui;
 
-    private String btnString1 = "Enter";
-    private String btnString2 = "Cancel";
+    /**
+     * Connection string regex pattern for input validation.
+     */
     private String regex = "^[A-Za-z0-9.-]*:[0-9]{1,4}$";
 
     /**
-     * Creates the reusable dialog.
+     * Input text element for validation.
      */
-    public NvidiaCUDAConfigDialog(Frame aFrame, String currentConnectionString) {
+    private String typedText = null;
 
-        super(aFrame, true);
+    /**
+     * Connection string input filed.
+     */
+    private JTextField textField;
+
+    /**
+     * Input/Output connection string.
+     */
+    private String connectionString;
+
+    /**
+     * UI Component.
+     */
+    private JOptionPane optionPane;
+
+    /**
+     * OK button text.
+     */
+    private String btnString1 = "Enter";
+
+    /**
+     * Cancel button text.
+     */
+    private String btnString2 = "Cancel";
+
+    /**
+     * Creates the reusable dialog.
+     *
+     * @param gui                     the parent frame.
+     * @param currentConnectionString the currently used connection string.
+     */
+    public NvidiaCUDAConfigDialog(DummyGui gui, String currentConnectionString) {
+
+        super(gui.f, true);
+        this.gui = gui;
 
         pattern = Pattern.compile(regex);
 
@@ -39,7 +79,7 @@ public class NvidiaCUDAConfigDialog extends JDialog
 
 
         String msgString1 = "Set the CUDA processor instance host:port";
-        Object[] array = {msgString1,  textField};
+        Object[] array = {msgString1, textField};
 
         Object[] options = {btnString1, btnString2};
 
@@ -113,6 +153,7 @@ public class NvidiaCUDAConfigDialog extends JDialog
                 Matcher m = pattern.matcher(ucText);
 
                 if (m.matches()) {
+                    gui.setConnectionString(ucText);
                     closeDialog();
                 } else {
                     //text was invalid
@@ -134,6 +175,7 @@ public class NvidiaCUDAConfigDialog extends JDialog
     }
 
     /**
+     * Call to close the dialog.
      */
     public void closeDialog() {
         setVisible(false);
