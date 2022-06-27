@@ -6,18 +6,21 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 /**
  * Application starter creating the basic user interface.
- * <p>
- * <p>
  * Created by Patrick Steinert on 04.04.22.
  */
 public class DummyGui {
     public JFrame f;
 
-
+    /**
+     * Internal helper for connection String
+     */
     private String connectionString = "localhost:4711";
+
+    private Vector<GraphCodeMeta> collection = new Vector<>();
 
     /**
      * Main function of the application.
@@ -89,6 +92,7 @@ public class DummyGui {
             public void actionPerformed(ActionEvent e) {
                 NvidiaCUDAProcessor ncp = new NvidiaCUDAProcessor();
                 ncp.setQueryObject(gc);
+                ncp.preloadIndex(collection);
                 String configString = dialog.getValidatedText();
                 if (configString == null) {
                     System.err.println("Please config first");

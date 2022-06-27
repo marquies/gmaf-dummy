@@ -62,15 +62,38 @@ public class NvidiaCUDAProcessor extends CollectionProcessor {
             socket.close();
 
             String strJson = result.toString().replace("metrics complete", "");
+            System.out.println(strJson);
 
             Gson json = new Gson();
             Vector<Object> elements = json.fromJson(strJson, Vector.class);
             for (Object o : elements) {
                 Map<String, Object> m = (Map<String, Object>) o;
                 String name = ((String) m.get("gc_filename"));
-                Float similarity = ((Float) m.get("similarity"));
-                Float recommendation = ((Float) m.get("recommendation"));
-                Float inferencing = ((Float) m.get("inferencing"));
+
+                Float similarity = 0.0F;
+                Object jsonObject = m.get("similarity");
+                if (jsonObject instanceof Float) {
+                    similarity = ((Float) jsonObject);
+                } else if (jsonObject instanceof Double) {
+                    similarity = ((Double) jsonObject).floatValue();
+                }
+
+                Float recommendation = 0.0F;
+                jsonObject = m.get("recommendation");
+                if (jsonObject instanceof Float) {
+                    recommendation = ((Float) jsonObject);
+
+                } else if (jsonObject instanceof Double) {
+                    recommendation = ((Double) jsonObject).floatValue();
+                }
+
+                Float inferencing = 0.0F;
+                jsonObject = m.get("inferencing");
+                if (jsonObject instanceof Float) {
+                    inferencing = ((Float) jsonObject);
+                } else if (jsonObject instanceof Double) {
+                    inferencing = ((Double) jsonObject).floatValue();
+                }
 
                 for (GraphCodeMeta gcm : collection) {
                     if (gcm.getFileName().equals(name)) {
@@ -107,6 +130,7 @@ public class NvidiaCUDAProcessor extends CollectionProcessor {
 
     /**
      * Setter for the host string.
+     *
      * @param s
      */
     public void setHost(String s) {
@@ -115,6 +139,7 @@ public class NvidiaCUDAProcessor extends CollectionProcessor {
 
     /**
      * Setter for the port string.
+     *
      * @param port
      */
     public void setPort(int port) {
